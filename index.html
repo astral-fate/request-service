@@ -198,7 +198,7 @@ nav {
     
 <script>
 
-    // script.js
+ // script.js
 document.addEventListener('DOMContentLoaded', () => {
     const authForm = document.getElementById('auth-form');
     const dashboard = document.getElementById('dashboard');
@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const servicesList = document.getElementById('services-list');
     const availableServicesList = document.getElementById('available-services-list');
 
-    let isAuthenticated = false;
+    let isAuthenticated = false; // Simulate authentication state
     let myServices = [];
     let availableServices = [
         {
@@ -252,26 +252,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    // Simulate authentication
+    // Simulate login
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        // Simple validation
-        if (email && password) {
-            isAuthenticated = true;
-            authForm.classList.add('hidden');
-            dashboard.classList.remove('hidden');
-            renderAvailableServices();
-        }
+        // Demo: Always "log in" the user, no validation
+        isAuthenticated = true;
+        authForm.classList.add('hidden');
+        dashboard.classList.remove('hidden');
+        renderAvailableServices();
     });
 
+    // Simulate registration (not implemented)
     registerLink.addEventListener('click', (e) => {
         e.preventDefault();
         alert('تسجيل حساب جديد غير متاح في هذا العرض التوضيحي.');
     });
 
+    // Simulate logout
     logoutBtn.addEventListener('click', () => {
         isAuthenticated = false;
         authForm.classList.remove('hidden');
@@ -327,7 +327,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 const serviceCard = document.createElement('div');
                 serviceCard.className = 'service-card';
                 serviceCard.innerHTML = `
-                    <h3>${service
+                    <h3>${service.title}</h3>
+                    <p>${service.description}</p>
+                    <div class="details">
+                        <span>📍 ${service.location}</span>
+                        ${service.date ? `<span>📅 ${service.date}</span>` : ''}
+                        <span>👤 ${service.requester}</span>
+                        <span>${service.status}</span>
+                    </div>
+                    <button onclick="acceptService(${service.id})">قبول الطلب</button>
+                `;
+                availableServicesList.appendChild(serviceCard);
+            });
+        }
+    }
+
+    // Render my services
+    function renderServices() {
+        servicesList.innerHTML = '';
+        if (myServices.length === 0) {
+            servicesList.innerHTML = '<p>لا توجد خدمات حتى الآن. قم بإنشاء خدمتك الأولى!</p>';
+        } else {
+            myServices.forEach(service => {
+                const serviceCard = document.createElement('div');
+                serviceCard.className = 'service-card';
+                serviceCard.innerHTML = `
+                    <h3>${service.title}</h3>
+                    <p>${service.description}</p>
+                    <div class="details">
+                        <span>📍 ${service.location}</span>
+                        ${service.date ? `<span>📅 ${service.date}</span>` : ''}
+                        <span>${service.status}</span>
+                    </div>
+                `;
+                servicesList.appendChild(serviceCard);
+            });
+        }
+    }
+
+    // Simulate accepting a service
+    window.acceptService = (serviceId) => {
+        const service = availableServices.find(s => s.id === serviceId);
+        if (service) {
+            alert(`لقد قبلت الخدمة: ${service.title}`);
+            service.status = 'تم القبول';
+            renderAvailableServices();
+        }
+    };
+});
 </script>
     
 </body>
