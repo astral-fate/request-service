@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تبادل الخدمات</title>
-  <style>
-
-      /* General Styles */
+   <style>
+       /* General Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -20,39 +19,72 @@ body {
     display: none;
 }
 
-/* Auth Form */
-.auth-form {
+/* Header */
+header {
+    background-color: #3b82f6;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+header nav {
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f9fafb;
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
-.card {
-    background: white;
+header nav button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+header nav button.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+header nav button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Main Content */
+main {
     padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    text-align: right;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.card h2 {
-    margin-bottom: 0.5rem;
+h2 {
+    color: #3b82f6;
+    margin-bottom: 1rem;
 }
 
-.card p {
-    color: #6b7280;
-    margin-bottom: 1.5rem;
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 input, textarea, button {
     width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
+    padding: 0.75rem;
     border: 1px solid #d1d5db;
     border-radius: 4px;
+    font-size: 1rem;
 }
 
 button {
@@ -60,59 +92,17 @@ button {
     color: white;
     border: none;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 button:hover {
     background-color: #2563eb;
 }
 
-/* Dashboard */
-.dashboard {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-}
-
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.tabs {
-    display: flex;
-    justify-content: center;
-    padding: 1rem;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.tabs button {
-    margin: 0 0.5rem;
-    background: none;
-    color: #3b82f6;
-    border: none;
-    cursor: pointer;
-}
-
-.tabs button.active {
-    font-weight: bold;
-}
-
-.tab-content {
-    padding: 1rem;
-    background: white;
-    margin: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
+/* Service Cards */
 #available-services-list, #services-list {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1rem;
 }
 
@@ -125,6 +115,7 @@ nav {
 
 .service-card h3 {
     margin: 0;
+    color: #3b82f6;
 }
 
 .service-card p {
@@ -138,82 +129,72 @@ nav {
     color: #6b7280;
     font-size: 0.875rem;
 }
-  </style>
+
+.service-card button {
+    margin-top: 1rem;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.service-card button:hover {
+    background-color: #059669;
+}
+   </style>
 </head>
 <body>
     <div id="app">
-        <!-- Login/Register Form -->
-        <div id="auth-form" class="auth-form">
-            <div class="card">
-                <h2>مرحبًا بك في تبادل الخدمات</h2>
-                <p>سجل الدخول لبدء تقديم الخدمات</p>
-                <form id="login-form">
-                    <input type="email" id="email" placeholder="البريد الإلكتروني" required>
-                    <input type="password" id="password" placeholder="كلمة المرور" required>
-                    <button type="submit">تسجيل الدخول</button>
-                </form>
-                <p>ليس لديك حساب؟ <a href="#" id="register-link">سجل هنا</a></p>
-            </div>
-        </div>
-
-        <!-- Dashboard -->
-        <div id="dashboard" class="dashboard hidden">
+        <!-- Header -->
+        <header>
+            <h1>تبادل الخدمات</h1>
             <nav>
-                <h1>تبادل الخدمات</h1>
-                <div>
-                    <button id="notifications-btn">🔔</button>
-                    <button id="logout-btn">تسجيل الخروج</button>
-                </div>
+                <button data-tab="browse-services" class="active">تصفح الخدمات</button>
+                <button data-tab="create-service">إنشاء خدمة</button>
+                <button data-tab="my-services">خدماتي</button>
             </nav>
+        </header>
 
-            <main>
-                <div class="tabs">
-                    <button data-tab="browse-services" class="active">تصفح الخدمات</button>
-                    <button data-tab="create-service">إنشاء خدمة</button>
-                    <button data-tab="my-services">خدماتي</button>
-                </div>
+        <!-- Main Content -->
+        <main>
+            <!-- Browse Services -->
+            <section id="browse-services" class="tab-content">
+                <h2>الخدمات المتاحة</h2>
+                <div id="available-services-list"></div>
+            </section>
 
-                <!-- Browse Services -->
-                <div id="browse-services" class="tab-content">
-                    <div id="available-services-list"></div>
-                </div>
+            <!-- Create Service Form -->
+            <section id="create-service" class="tab-content hidden">
+                <h2>إنشاء خدمة جديدة</h2>
+                <form id="service-form">
+                    <input type="text" id="title" placeholder="عنوان الخدمة" required>
+                    <textarea id="description" placeholder="وصف مفصل للخدمة" required></textarea>
+                    <input type="text" id="category" placeholder="التصنيف" required>
+                    <input type="text" id="location" placeholder="الموقع" required>
+                    <input type="date" id="date">
+                    <button type="submit">إنشاء الخدمة</button>
+                </form>
+            </section>
 
-                <!-- Create Service Form -->
-                <div id="create-service" class="tab-content hidden">
-                    <form id="service-form">
-                        <input type="text" id="title" placeholder="عنوان الخدمة" required>
-                        <textarea id="description" placeholder="وصف مفصل للخدمة" required></textarea>
-                        <input type="text" id="category" placeholder="التصنيف" required>
-                        <input type="text" id="location" placeholder="الموقع" required>
-                        <input type="date" id="date">
-                        <button type="submit">إنشاء الخدمة</button>
-                    </form>
-                </div>
-
-                <!-- My Services -->
-                <div id="my-services" class="tab-content hidden">
-                    <div id="services-list"></div>
-                </div>
-            </main>
-        </div>
+            <!-- My Services -->
+            <section id="my-services" class="tab-content hidden">
+                <h2>خدماتي</h2>
+                <div id="services-list"></div>
+            </section>
+        </main>
     </div>
 
- <script>
-
-
-     document.addEventListener('DOMContentLoaded', () => {
-    const authForm = document.getElementById('auth-form');
-    const dashboard = document.getElementById('dashboard');
-    const loginForm = document.getElementById('login-form');
-    const registerLink = document.getElementById('register-link');
-    const logoutBtn = document.getElementById('logout-btn');
-    const tabs = document.querySelectorAll('.tabs button');
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const tabs = document.querySelectorAll('header nav button');
     const tabContents = document.querySelectorAll('.tab-content');
     const serviceForm = document.getElementById('service-form');
     const servicesList = document.getElementById('services-list');
     const availableServicesList = document.getElementById('available-services-list');
 
-    let isAuthenticated = false; // Simulate authentication state
     let myServices = [];
     let availableServices = [
         {
@@ -253,28 +234,6 @@ nav {
             requester: 'ليلى_عمر'
         }
     ];
-
-    // Simulate login
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        isAuthenticated = true; // Always "log in" the user
-        authForm.classList.add('hidden');
-        dashboard.classList.remove('hidden');
-        renderAvailableServices();
-    });
-
-    // Simulate registration (not implemented)
-    registerLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('تسجيل حساب جديد غير متاح في هذا العرض التوضيحي.');
-    });
-
-    // Simulate logout
-    logoutBtn.addEventListener('click', () => {
-        isAuthenticated = false;
-        authForm.classList.remove('hidden');
-        dashboard.classList.add('hidden');
-    });
 
     // Tab navigation
     tabs.forEach(tab => {
@@ -372,7 +331,10 @@ nav {
             renderAvailableServices();
         }
     };
+
+    // Initial render
+    renderAvailableServices();
 });
- </script>
+    </script>
 </body>
 </html>
