@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تبادل الخدمات</title>
+   <style>
+       /* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9fafb;
+    text-align: right; /* Align text to the right */
+    direction: rtl; /* Ensure RTL layout */
+}
+
+.hidden {
+    display: none;
+}
+
+.auth-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f9fafb;
+}
+
+.card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: right; /* Align text to the right */
+}
+
+.card h2 {
+    margin-bottom: 0.5rem;
+}
+
+.card p {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+}
+
+input, textarea, button {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2563eb;
+}
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tabs button {
+    margin: 0 0.5rem;
+    background: none;
+    color: #3b82f6;
+    border: none;
+    cursor: pointer;
+}
+
+.tabs button.active {
+    font-weight: bold;
+}
+
+.tab-content {
+    padding: 1rem;
+    background: white;
+    margin: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#available-services-list, #services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.service-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.service-card h3 {
+    margin: 0;
+}
+
+.service-card p {
+    color: #6b7280;
+    margin: 0.5rem 0;
+}
+
+.service-card .details {
+    display: flex;
+    gap: 1rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+   </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Login/Register Form -->
+        <div id="auth-form" class="auth-form">
+            <div class="card">
+                <h2>مرحبًا بك في تبادل الخدمات</h2>
+                <p>سجل الدخول لبدء تقديم الخدمات</p>
+                <form id="login-form">
+                    <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+                    <input type="password" id="password" placeholder="كلمة المرور" required>
+                    <button type="submit">تسجيل الدخول</button>
+                </form>
+                <p>ليس لديك حساب؟ <a href="#" id="register-link">سجل هنا</a></p>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="dashboard hidden">
+            <nav>
+                <h1>تبادل الخدمات</h1>
+                <div>
+                    <button id="notifications-btn">🔔</button>
+                    <button id="logout-btn">تسجيل الخروج</button>
+                </div>
+            </nav>
+
+            <main>
+                <div class="tabs">
+                    <button data-tab="browse-services" class="active">تصفح الخدمات</button>
+                    <button data-tab="create-service">إنشاء خدمة</button>
+                    <button data-tab="my-services">خدماتي</button>
+                </div>
+
+                <!-- Browse Services -->
+                <div id="browse-services" class="tab-content">
+                    <div id="available-services-list"></div>
+                </div>
+
+                <!-- Create Service Form -->
+                <div id="create-service" class="tab-content hidden">
+                    <form id="service-form">
+                        <input type="text" id="title" placeholder="عنوان الخدمة" required>
+                        <textarea id="description" placeholder="وصف مفصل للخدمة" required></textarea>
+                        <input type="text" id="category" placeholder="التصنيف" required>
+                        <input type="text" id="location" placeholder="الموقع" required>
+                        <input type="date" id="date">
+                        <button type="submit">إنشاء الخدمة</button>
+                    </form>
+                </div>
+
+                <!-- My Services -->
+                <div id="my-services" class="tab-content hidden">
+                    <div id="services-list"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+<script>
+
+    // script.js
+document.addEventListener('DOMContentLoaded', () => {
+    const authForm = document.getElementById('auth-form');
+    const dashboard = document.getElementById('dashboard');
+    const loginForm = document.getElementById('login-form');
+    const registerLink = document.getElementById('register-link');
+    const logoutBtn = document.getElementById('logout-btn');
+    const tabs = document.querySelectorAll('.tabs button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const serviceForm = document.getElementById('service-form');
+    const servicesList = document.getElementById('services-list');
+    const availableServicesList = document.getElementById('available-services-list');
+
+    let isAuthenticated = false;
+    let myServices = [];
+    let availableServices = [
+        {
+            id: 1,
+            title: 'مساعدة في قراءة كتاب',
+            description: 'أحتاج مساعدة في قراءة فصل من كتاب الأدب العربي.',
+            location: 'جامعة القاهرة',
+            date: '2023-12-15',
+            status: 'مفتوح',
+            requester: 'أحمد_علي'
+        },
+        {
+            id: 2,
+            title: 'مساعدة في حل واجبات الرياضيات',
+            description: 'أحتاج مساعدة في حل تمارين الجبر للصف الأول الثانوي.',
+            location: 'جامعة الإسكندرية',
+            date: '2023-12-20',
+            status: 'مفتوح',
+            requester: 'فاطمة_محمد'
+        },
+        {
+            id: 3,
+            title: 'مرافقة إلى المكتبة',
+            description: 'أحتاج شخصًا لمرافقتي إلى المكتبة لاستعارة بعض الكتب.',
+            location: 'جامعة عين شمس',
+            date: '2023-12-18',
+            status: 'مفتوح',
+            requester: 'يوسف_خالد'
+        },
+        {
+            id: 4,
+            title: 'مساعدة في استخدام الحاسوب',
+            description: 'أحتاج مساعدة في استخدام برنامج قارئ الشاشة على الحاسوب.',
+            location: 'جامعة المنصورة',
+            date: '2023-12-22',
+            status: 'مفتوح',
+            requester: 'ليلى_عمر'
+        }
+    ];
+
+    // Simulate authentication
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        // Simple validation
+        if (email && password) {
+            isAuthenticated = true;
+            authForm.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+            renderAvailableServices();
+        }
+    });
+
+    registerLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('تسجيل حساب جديد غير متاح في هذا العرض التوضيحي.');
+    });
+
+    logoutBtn.addEventListener('click', () => {
+        isAuthenticated = false;
+        authForm.classList.remove('hidden');
+        dashboard.classList.add('hidden');
+    });
+
+    // Tab navigation
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            tabContents.forEach(content => content.classList.add('hidden'));
+            document.getElementById(tab.dataset.tab).classList.remove('hidden');
+        });
+    });
+
+    // Service form submission
+    serviceForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const category = document.getElementById('category').value;
+        const location = document.getElementById('location').value;
+        const date = document.getElementById('date').value;
+
+        if (title && description && category && location) {
+            const newService = {
+                id: Date.now(),
+                title,
+                description,
+                category,
+                location,
+                date,
+                status: 'نشط'
+            };
+
+            myServices.push(newService);
+            renderServices();
+            serviceForm.reset();
+            alert('تم إنشاء الخدمة بنجاح!');
+        } else {
+            alert('يرجى ملء جميع الحقول المطلوبة.');
+        }
+    });
+
+    // Render available services
+    function renderAvailableServices() {
+        availableServicesList.innerHTML = '';
+        if (availableServices.length === 0) {
+            availableServicesList.innerHTML = '<p>لا توجد خدمات متاحة حاليًا.</p>';
+        } else {
+            availableServices.forEach(service => {
+                const serviceCard = document.createElement('div');
+                serviceCard.className = 'service-card';
+                serviceCard.innerHTML = `
+                    <h3>${service
+</script>
+    
+</body>
+</html>
